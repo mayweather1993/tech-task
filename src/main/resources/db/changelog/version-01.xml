@@ -1,0 +1,79 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="1" author="pashka">
+
+
+        <createSequence sequenceName="hibernate_sequence" startValue="1"/>
+        <createTable tableName="orders">
+
+            <column name="id" type="${type.long}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_orders_id"/>
+            </column>
+            <column name="status" type="${type.varchar}(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="price" type="${type.decimal}(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="currency" type="${type.varchar}(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${type.timestamp}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${type.timestamp}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="customer_id" type="${type.long}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addAutoIncrement
+                columnDataType="${type.long}"
+                columnName="id"
+                incrementBy="1"
+                schemaName="public"
+                startWith="1"
+                tableName="orders"/>
+        <createTable tableName="customer">
+            <column name="id" type="${type.long}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_customer_id"/>
+            </column>
+            <column name="name" type="${type.varchar}(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="surname" type="${type.varchar}(32)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="birthday" type="${type.timestamp}(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sex" type="${type.varchar}(6)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="identity_code" type="${type.long}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_date" type="${type.timestamp}">
+                <constraints nullable="false"/>
+            </column>
+            <column name="last_modified_date" type="${type.timestamp}">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addAutoIncrement
+                columnDataType="${type.long}"
+                columnName="id"
+                incrementBy="1"
+                schemaName="public"
+                startWith="1"
+                tableName="customer"/>
+
+        <addForeignKeyConstraint baseTableName="orders" baseColumnNames="customer_id"
+                                 constraintName="customer_order_id"
+                                 referencedTableName="customer" referencedColumnNames="id"/>
+    </changeSet>
+</databaseChangeLog>

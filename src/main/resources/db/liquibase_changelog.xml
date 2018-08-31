@@ -1,0 +1,31 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+
+    <property name="type.varchar" value="VARCHAR" dbms="h2"/>
+    <property name="type.timestamp" value="TIMESTAMP" dbms="h2"/>
+    <property name="type.long" value="BIGINT" dbms="h2"/>
+    <property name="type.boolean" value="SMALLINT" dbms="h2"/>
+    <property name="type.smallint" value="SMALLINT" dbms="h2"/>
+    <property name="type.bigint" value="BIGINT" dbms="h2"/>
+    <property name="type.blob" value="BLOB" dbms="h2"/>
+    <property name="type.clob" value="CLOB" dbms="h2"/>
+    <property name="type.int" value="INT" dbms="h2"/>
+    <property name="type.decimal" value="DOUBLE" dbms="h2"/>
+
+    <property dbms="postgresql" value="VARCHAR" name="type.varchar"/>
+    <property dbms="postgresql" value="TIMESTAMP" name="type.timestamp"/>
+    <property dbms="postgresql" value="BIGINT" name="type.long"/>
+    <property dbms="postgresql" value="BOOLEAN" name="type.boolean"/>
+    <property dbms="postgresql" value="SMALLINT" name="type.smallint"/>
+    <property dbms="postgresql" value="BIGINT" name="type.bigint"/>
+    <property dbms="postgresql" value="BYTEA" name="type.blob"/>
+    <property dbms="postgresql" value="TEXT" name="type.clob"/>
+    <property dbms="postgresql" value="INT" name="type.int"/>
+    <property dbms="postgresql" value="DECIMAL" name="type.decimal"/>
+
+
+    <include file="db/changelog/version-01.xml"/>
+</databaseChangeLog>
