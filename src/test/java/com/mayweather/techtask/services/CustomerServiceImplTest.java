@@ -1,55 +1,120 @@
 package com.mayweather.techtask.services;
 
+import com.mayweather.techtask.models.Currency;
+import com.mayweather.techtask.models.Sex;
+import com.mayweather.techtask.models.Status;
 import com.mayweather.techtask.models.domain.CustomerEntity;
+import com.mayweather.techtask.models.domain.OrderEntity;
+import com.mayweather.techtask.models.vm.OrderVM;
 import com.mayweather.techtask.repository.CustomerRepository;
+import com.mayweather.techtask.repository.OrderRepository;
+import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Arrays;
+import java.time.Instant;
+import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@Ignore
+@RunWith(SpringRunner.class)
+@SpringBootTest
 public class CustomerServiceImplTest {
 
-    @Mock
-    CustomerRepository customerRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
-    CustomerService customerService;
+    @Autowired
+    private CustomerService customerService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderService orderService;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
 
     @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+    public void setUp() {
+        orderRepository.deleteAllInBatch();
+        customerRepository.deleteAllInBatch();
+    }
 
-        customerService = new CustomerServiceImpl(customerRepository);
+
+    @Test
+    public void testCreateCustomer() {
+        long count = 2L;
+        customerRepository.save(new CustomerEntity(1L, "Pasha", "Kozachek", Instant.now(), Sex.MALE, 1039435, Instant.now(),
+                Instant.now(), null));
+        customerRepository.save(new CustomerEntity(2L, "Good", "Guy", Instant.now(), Sex.MALE, 424235532, Instant.now(),
+                Instant.now(), null));
+
+        final Page<CustomerEntity> page = customerService.getPerPage(Pageable.unpaged());
+        final long elements = page.getTotalElements();
+        assertEquals(count, elements);
+    }
+
+    @Test
+    public void testDeleteCustomer() {
+        final CustomerEntity customer = customerRepository.save(new CustomerEntity(1L, "Pasha", "Kozachek", Instant.now(), Sex.MALE, 1039435, Instant.now(),
+                Instant.now(), null));
+
+        customerService.delete(customer.getId());
+
+        final List<CustomerEntity> list = customerRepository.findAll();
+
+        assertTrue(String.valueOf(list.isEmpty()), true);
+    }
+
+    @Test
+    public void testGetCustomers() {
+        long count = 2L;
+        customerRepository.save(new CustomerEntity(1L, "Pasha", "Kozachek", Instant.now(), Sex.MALE, 1039435, Instant.now(),
+                Instant.now(), null));
+        customerRepository.save(new CustomerEntity(2L, "Good", "Guy", Instant.now(), Sex.MALE, 424235532, Instant.now(),
+                Instant.now(), null));
+
+        final Page<CustomerEntity> customers = customerService.getPerPage(Pageable.unpaged());
+        assertEquals(count, customers.getTotalElements());
     }
 
     @Test
     public void getOrders() {
-        CustomerEntity customer1 = new CustomerEntity();
-        customer1.setId(1L);
-        customer1.setName("Michale");
-        customer1.setSurname("Weston");
+        long count = 2L;
+        final CustomerEntity customerEntity = customerRepository.save(new CustomerEntity(1L, "Pasha", "Kozachek", Instant.now(), Sex.MALE, 1039435, Instant.now(),
+                Instant.now(), null));
+        orderService.save(new OrderEntity(1L, Status.NEW, 250d, Currency.EUR,
+                Instant.now(), Instant.now(), customerEntity));
+        orderService.save(new OrderEntity(2L, Status.NEW, 356d, Currency.USD,
+                Instant.now(), Instant.now(), customerEntity));
 
-        CustomerEntity customer2 = new CustomerEntity();
-        customer2.setId(2L);
-        customer2.setName("Sam");
-        customer2.setSurname("Axe");
+        final List<OrderVM> orders = customerService.getOrders(customerEntity.getId());
 
-        Mockito.when(customerRepository.findAll()).thenReturn(Arrays.asList(customer1 , customer2));
-
+        assertEquals(count, orders.size());
 
     }
 
     @Test
     public void saveOrder() {
-    }
-
-    @Test
-    public void saveCustomerByVM() {
+        final CustomerEntity customerEntity = customerRepository.save(new CustomerEntity(1L, "Pasha", "Kozachek", Instant.now(), Sex.MALE, 1039435, Instant.now(),
+                Instant.now(), null));
+        final OrderVM orderVM = new OrderVM(1L, Status.NEW, 245d, Currency.UAH, Instant.now(), Instant.now(), customerEntity.getId());
+        List<OrderVM> orders = customerService.getOrders(customerEntity.getId());
+        Assert.assertEquals(0, orders.size());
+        customerService.saveOrder(customerEntity.getId(), orderVM);
+        orders = customerService.getOrders(customerEntity.getId());
+        Assert.assertEquals(1, orders.size());
     }
 }

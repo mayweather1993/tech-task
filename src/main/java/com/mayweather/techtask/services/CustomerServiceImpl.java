@@ -5,6 +5,7 @@ import com.mayweather.techtask.models.domain.OrderEntity;
 import com.mayweather.techtask.models.vm.CustomerVM;
 import com.mayweather.techtask.models.vm.OrderVM;
 import com.mayweather.techtask.repository.CustomerRepository;
+import com.mayweather.techtask.utils.changers.order.OrderChanger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +34,8 @@ public class CustomerServiceImpl extends AbstractService<CustomerRepository, Cus
     public void saveOrder(Long customerId, OrderVM orderVM) {
         final CustomerEntity customerEntity = findById(customerId);
         final List<OrderEntity> orders = customerEntity.getOrders();
-        final List<OrderVM> orderVMList = listChangerToVm(orders);
-        orderVMList.add(orderVM);
+        orders.add(OrderChanger.toOrderEntity(orderVM));
+        save(customerEntity);
     }
 
     @Override

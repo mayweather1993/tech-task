@@ -87,15 +87,4 @@ public class OrdersController {
         return new ResponseEntity<>(OK);
     }
 
-
-    //i need this?
-  /* @PutMapping(ID_PATH)
-    public ResponseEntity update(@PathVariable(ID) final Long id, @RequestBody final OrderVM orderVM) {
-        final OrderEntity entity = toOrderEntity(orderVM);
-        entity.setId(id);
-        final OrderEntity orderEntity = orderService.save(entity);
-        final OrderVM vm = toOrderVM(orderEntity);
-        return new ResponseEntity<>(vm, HttpStatus.OK);
-    }
-    */
 }
