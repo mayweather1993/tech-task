@@ -1,0 +1,21 @@
+version: '3.2'
+
+services:
+  db:
+    image: postgres:10
+    restart: always
+    environment:
+      POSTGRES_DB: task
+      POSTGRES_PASSWORD: example
+
+  app:
+    image: app
+    depends_on:
+    - db
+    build:
+      context: ./
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+    ports:
+    - 80:8080
